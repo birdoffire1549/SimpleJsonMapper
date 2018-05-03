@@ -1,0 +1,75 @@
+/* ************************* *
+ * Define applicable plugins *
+ * ************************* */
+plugins {
+    id "java"
+    id "eclipse"
+}
+
+/* ******************************************* *
+ * Load and set the Version from Property file *
+ * ******************************************* */
+Properties props = new Properties()
+props.load(new FileInputStream("${projectDir}/src/main/resources/version.properties"))
+def appVersion = props.get('appVersion')
+version = appVersion
+
+/* **************************** *
+ * Define some basic properties *
+ * **************************** */
+def getDate() {
+	return (new Date()).format("MM-dd-yyyy HH:mm:ss")
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+group = "com.firebirdcss.api"
+
+/* ******************* *
+ * Define repositories *
+ * ******************* */
+repositories {
+	mavenCentral()
+}
+
+/* ************************************** *
+ * Define source and resource directories *
+ * ************************************** */
+sourceSets {
+    main {
+        java.srcDirs "src/main/java"
+	    resources.srcDirs "src/main/resources"
+    }
+
+    test {
+		java.srcDir "src/test/java"
+    }
+}
+
+/* ******************* *
+ * Define dependencies *
+ * ******************* */
+dependencies {
+	testCompile "junit:junit:4.11"
+}
+
+/* **************************************************************** *
+ * Defines the build parameters specific to the building of the JAR *
+ * **************************************************************** */
+jar {
+	manifest { 
+        attributes('Implementation-Title': 'SimpleJsonMapper API', 
+        			'Implementation-Version': version,
+        			"Implementation-Vendor": "Scott Griffis",
+        			"Build-Date": getDate())
+    }
+    
+    from {
+        excludes = ["doc/**"]
+        sourceSets.main.java
+    }
+
+    from ('src/main/resources') {
+    	includes = ['version.properties']
+    }
+}
