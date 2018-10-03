@@ -206,6 +206,17 @@ public class JsonArray {
 	}
 	
 	/**
+	 * @return Gets this JsonArray as a {@link Value} object.
+	 * 
+	 */
+	public Value toValue() {
+		Value value = new Value();
+		value.setValue(this);
+		
+		return value;
+	}
+	
+	/**
 	 * @return Returns an array of the {@link Value}s contained within this
 	 * array object.
 	 * 

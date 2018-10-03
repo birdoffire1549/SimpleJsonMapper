@@ -63,7 +63,7 @@ public class JsonObject {
 			String arrayIndex = null; 
 			int startBracketIndex = currentHop.indexOf('[');
 			if (startBracketIndex != -1) {
-				arrayIndex = currentHop.substring(startBracketIndex);
+				arrayIndex = currentHop.substring(startBracketIndex, currentHop.length());
 				currentHop = currentHop.substring(0, startBracketIndex);
 			}
 			
@@ -142,8 +142,10 @@ public class JsonObject {
 				MappedItem item = mappedItems.getFirstItem(); // Got an item, now process it...
 				
 				Value value = null;
-				if (item.getCharType() == CharType.CURLY_BRACKET) { // Object Found...
+				if (item.getCharType() == CharType.CURLY_BRACKET) { // <-----------------------------{ Object Found...
 					JsonObject obj = new JsonObject(json, mappedItems.pullEncapsulatedItems(item));
+					this.cachedValues.put(key, obj.toValue()); // #### CACHE IT! ####
+					
 					if (dataPathHops.length > 1) {
 						value = obj.getValue(Arrays.copyOfRange(dataPathHops, 1, dataPathHops.length));
 					} else {
@@ -153,9 +155,12 @@ public class JsonObject {
 					if (mappedItems.size() > 0 && mappedItems.getFirstItem().getCharType() == CharType.COMMA) {
 						mappedItems.removeFirstItem(); // remove comma
 					}
-				} else if (item.getCharType() == CharType.SQUARE_BRACKET) { // Array Found...
+				} else if (item.getCharType() == CharType.SQUARE_BRACKET) { // <---------------------{ Array Found...
 					JsonArray array = new JsonArray(json, mappedItems.pullEncapsulatedItems(item));
+					this.cachedValues.put(key, array.toValue()); // #### CACHE IT! ####
+					
 					value = array.getValue(arrayIndex);
+					
 					if (dataPathHops.length > 1) {
 						if (value != null && value.isObject()) {
 							value = value.getAsJsonObject().getValue(Arrays.copyOfRange(dataPathHops, 1, dataPathHops.length));
@@ -169,31 +174,35 @@ public class JsonObject {
 				} else { // Must be a key or value???
 					if (item.getCharType() == CharType.DOUBLE_QUOTE 
 							&& mappedItems.peekSecondItem().getCharType() == CharType.COLON
-					) {
+					) { // <-------------------------------------------------------------------------{ Key Found...
 						key = json.substring(item.getOpenIndex() + 1, item.getCloseIndex());
 						value = null;
 						mappedItems.removeFirstItem(); // removes quotes...
 						mappedItems.removeFirstItem(); // removes colon...
-					} else if (item.getCharType() == CharType.COLON) { // Unquoted key...
+					} else if (item.getCharType() == CharType.COLON) { // <--------------------------{ Key Found...
 						/* Get the Key */
 						MappedItem prev = mappedItems.recallPreviousItem();
 						int startIndex = (prev.getCharType() != CharType.CURLY_BRACKET && prev.getCloseIndex() != -1 ? prev.getCloseIndex() : prev.getOpenIndex());
 						key = json.substring(startIndex + 1, item.getOpenIndex()).trim();
 						value = null;
 						mappedItems.removeFirstItem(); // removes colon...
-					} else if (item.getCharType() == CharType.DOUBLE_QUOTE) { // must be a quoted value...
+					} else if (item.getCharType() == CharType.DOUBLE_QUOTE) { // <-------------------{ Value Found...
 							value = new Value();
 							value.setValue(json.substring(item.getOpenIndex() + 1, item.getCloseIndex()));
+							this.cachedValues.put(key, value); // #### CACHE IT! ####
+							
 							if (item.getCharType() == CharType.DOUBLE_QUOTE) {
 								mappedItems.removeFirstItem();
 							}
 							if (mappedItems.size() > 0 && mappedItems.getFirstItem().getCharType() == CharType.COMMA) {
 								mappedItems.removeFirstItem(); // Remove the comma...
 							}
-					} else { // must be an unquoted value...
+					} else { // <--------------------------------------------------------------------{ Value Found...
 						value = new Value();
 						String tmpValue = json.substring((mappedItems.recallPreviousItem().getCloseIndex() == -1 ? mappedItems.recallPreviousItem().getOpenIndex() : mappedItems.recallPreviousItem().getCloseIndex()) + 1, item.getOpenIndex());
 						value.setValue((tmpValue == null ? null : tmpValue.trim()));
+						this.cachedValues.put(key, value); // #### CACHE IT! ####
+						
 						if (mappedItems.size() > 0 && mappedItems.getFirstItem().getCharType() == CharType.COMMA) {
 							mappedItems.removeFirstItem(); // removes the comma...
 						}
@@ -206,15 +215,16 @@ public class JsonObject {
 					value = new Value();
 					String tempValue = json.substring(mappedItems.recallPreviousItem().getOpenIndex() + 1, endIndex).trim();
 					value.setValue(tempValue);
+					this.cachedValues.put(key, value); // #### CACHE IT! ####
 				}
 				
-				/* Cache value if complete */
-				if (value != null) { // Cache it...
-					cachedValues.put(key, value);
-					if (currentHop.equals(key)) {
-						
-						return value;
-					}
+				/* 
+				 * Return a value if we have one; 
+				 * This prevents from returning on key or other non-value syntax 
+				 */
+				if (value != null) {
+				
+					return value;
 				}
 			}
 		}
@@ -230,6 +240,17 @@ public class JsonObject {
 	public String toString() {
 		
 		return json.substring(startIndex, endIndex + 1);
+	}
+	
+	/**
+	 * @return Gets this JsonObject as a {@link Value} Object.
+	 * 
+	 */
+	public Value toValue() {
+		Value value = new Value();
+		value.setValue(this);
+		
+		return value;
 	}
 	
 	/**
