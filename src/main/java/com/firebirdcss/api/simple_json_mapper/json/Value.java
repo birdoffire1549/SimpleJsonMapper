@@ -203,6 +203,21 @@ public class Value {
 		return null;
 	}
 	
+	/**
+	 * Allows for a float style numeric {@link String} value to be returned as a {@link Float} value.
+	 * 
+	 * @return Returns the value as a {@link Float} unless it is not numeric in which
+	 * case it would be returned as null.
+	 */
+	public Float getAsFloat() {
+		if (isString && JsonUtils.isNumeric((String)value)) {
+			
+			return Float.parseFloat((String)value);
+		}
+		
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
