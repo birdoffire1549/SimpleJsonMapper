@@ -14,4 +14,4 @@ Example:<br>
 <br>
 SimpleJsonMapper jMapper = new SimpleJsonMapper(jsonString);<br>
 Long desiredValue1 = jMapper.getValue("record_count").getAsLong();<br>
-String desiredValue2 = jMapper.getValue("people[1].first_name").toString();
+String desiredValue2 = jMapper.getValue("people[1].first_name");
