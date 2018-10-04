@@ -222,7 +222,7 @@ public class JsonObject {
 				 * Return a value if we have one; 
 				 * This prevents from returning on key or other non-value syntax 
 				 */
-				if (value != null) {
+				if (value != null && currentHop.equals(key)) {
 				
 					return value;
 				}
