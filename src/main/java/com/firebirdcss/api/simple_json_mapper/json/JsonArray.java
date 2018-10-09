@@ -84,7 +84,7 @@ public class JsonArray {
 	 * @return Returns the desired {@link Value}
 	 */
 	public Value getValue(int index) {
-		if (valueArray.size() >= index) {
+		if (index < valueArray.size()) {
 			
 			return valueArray.get(index);
 		}
