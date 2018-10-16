@@ -9,7 +9,7 @@ plugins {
 /* ******************************************* *
  * Load and set the Version from Property file *
  * ******************************************* */
-def appVersion = "0.5.0"
+def appVersion = "0.5.1"
 version = appVersion
 
 /* **************************** *

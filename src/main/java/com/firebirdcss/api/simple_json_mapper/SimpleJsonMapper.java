@@ -45,4 +45,13 @@ public class SimpleJsonMapper {
 		
 		return baseObject.getValue(dataPath);
 	}
+	
+	/**
+	 * @return Returns the JSON's base object as {@link JsonObject)
+	 * 
+	 */
+	public JsonObject getBaseObject() {
+		
+		return this.baseObject; 
+	}
 }

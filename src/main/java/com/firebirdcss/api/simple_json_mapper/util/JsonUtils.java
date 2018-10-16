@@ -2,10 +2,6 @@ package com.firebirdcss.api.simple_json_mapper.util;
 
 import java.util.ArrayList;
 
-import com.firebirdcss.util.json_tools.JsonUtilities;
-import com.firebirdcss.util.json_tools.mapping.CharType;
-import com.firebirdcss.util.json_tools.mapping.MappedItem;
-
 /**
  * This class contains some general utility methods.
  * 
