@@ -9,9 +9,7 @@ plugins {
 /* ******************************************* *
  * Load and set the Version from Property file *
  * ******************************************* */
-Properties props = new Properties()
-props.load(new FileInputStream("${projectDir}/src/main/resources/version.properties"))
-def appVersion = props.get('appVersion')
+def appVersion = "0.5.0"
 version = appVersion
 
 /* **************************** *
@@ -29,6 +27,9 @@ group = "com.firebirdcss.api"
  * Define repositories *
  * ******************* */
 repositories {
+	flatDir {
+		dirs 'libs'
+	}
 	mavenCentral()
 }
 
@@ -50,6 +51,7 @@ sourceSets {
  * Define dependencies *
  * ******************* */
 dependencies {
+	compile 'com.firebirdcss.util:JsonTools:+' // Contains methods for mapping JSON Strings...
 	testCompile "junit:junit:4.11"
 }
 

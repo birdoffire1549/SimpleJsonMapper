@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.firebirdcss.api.simple_json_mapper.mapping.MappedItem;
-import com.firebirdcss.api.simple_json_mapper.mapping.MappedItems;
 import com.firebirdcss.api.simple_json_mapper.util.JsonUtils;
+import com.firebirdcss.util.json_tools.mapping.CharType;
+import com.firebirdcss.util.json_tools.mapping.MappedItem;
+import com.firebirdcss.util.json_tools.mapping.MappedItems;
 
 /**
  * This item makes up a JSON Object and contains functionality required

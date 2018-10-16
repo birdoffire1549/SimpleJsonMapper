@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import com.firebirdcss.api.simple_json_mapper.json.JsonObject;
 import com.firebirdcss.api.simple_json_mapper.json.Value;
-import com.firebirdcss.api.simple_json_mapper.mapping.MappedItem;
-import com.firebirdcss.api.simple_json_mapper.mapping.MappedItems;
-import com.firebirdcss.api.simple_json_mapper.util.JsonUtils;
+import com.firebirdcss.util.json_tools.JsonUtilities;
+import com.firebirdcss.util.json_tools.mapping.MappedItem;
+import com.firebirdcss.util.json_tools.mapping.MappedItems;
 
 /**
  * This is a SIMPLE JSON Mapper...
@@ -31,7 +31,7 @@ public class SimpleJsonMapper {
 	 */
 	public SimpleJsonMapper(String json) {
 		mappedItems.clear();
-		mappedItems.addAll(JsonUtils.mapJson(json));
+		mappedItems.addAll(JsonUtilities.mapJson(json));
 		baseObject = new JsonObject(json, new MappedItems(mappedItems));
 	}
 	

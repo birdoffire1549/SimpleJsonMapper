@@ -3,9 +3,10 @@ package com.firebirdcss.api.simple_json_mapper.json;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.firebirdcss.api.simple_json_mapper.mapping.MappedItem;
-import com.firebirdcss.api.simple_json_mapper.mapping.MappedItems;
 import com.firebirdcss.api.simple_json_mapper.util.JsonUtils;
+import com.firebirdcss.util.json_tools.mapping.CharType;
+import com.firebirdcss.util.json_tools.mapping.MappedItem;
+import com.firebirdcss.util.json_tools.mapping.MappedItems;
 
 /**
  * This item makes up a JSON Array and contains functionality required
