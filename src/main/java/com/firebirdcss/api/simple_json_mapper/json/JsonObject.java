@@ -58,6 +58,7 @@ public class JsonObject {
 	 * @return Returns the desired value as {@link Value}
 	 */
 	public Value getValue(String[] dataPathHops) {
+		Value result = new Value();
 		if (dataPathHops != null) {
 			String currentHop = dataPathHops[0];
 			
@@ -68,16 +69,14 @@ public class JsonObject {
 				currentHop = currentHop.substring(0, startBracketIndex);
 			}
 			
-			Value value = getValueFromCache(currentHop, arrayIndex, dataPathHops);
-			if (value != null) {
+			result = getValueFromCache(currentHop, arrayIndex, dataPathHops);
+			if (result == null) {
 				
-				return value;
+				result = getValueFromJson(currentHop, arrayIndex, dataPathHops);
 			}
-			
-			return getValueFromJson(currentHop, arrayIndex, dataPathHops);
 		}
 		
-		return null;
+		return result;
 	}
 	
 	/**
@@ -132,6 +131,8 @@ public class JsonObject {
 	 * @return Returns the desired value as {@link Value}
 	 */
 	private Value getValueFromJson(String currentHop, String arrayIndex, String[] dataPathHops) {
+		Value nullValue = new Value();
+		
 		if (mappedItems != null) {
 			String key = null;
 			
@@ -230,7 +231,7 @@ public class JsonObject {
 			}
 		}
 		
-		return null;
+		return nullValue;
 	}
 	
 	/*

@@ -85,12 +85,13 @@ public class JsonArray {
 	 * @return Returns the desired {@link Value}
 	 */
 	public Value getValue(int index) {
+		Value result = new Value();
 		if (index < valueArray.size()) {
 			
-			return valueArray.get(index);
+			result = valueArray.get(index);
 		}
 		
-		return null;
+		return result;
 	}
 	
 	/**
@@ -102,61 +103,62 @@ public class JsonArray {
 	 * @return Returns the desired {@link Value}
 	 */
 	public Value getValue(String indexes) {
-		if (indexes == null) {
-			Value value = new Value();
-			value.setValue(this);
-			
-			return value;
-		}
+		Value valueResult = new Value();
 		
-		if (indexes.contains("[")) {
-			ArrayList<Integer> tempIndexes = new ArrayList<>();
-			StringBuilder sb = new StringBuilder();
-			for (char c : indexes.toCharArray()) {
-				if (c == '[') {
-					sb = new StringBuilder();
-				} else if (c == ']') {
-					if (JsonUtils.isNumeric(sb.toString())) {
-						tempIndexes.add(Integer.parseInt(sb.toString()));
+		if (indexes == null) {
+			valueResult.setValue(this);
+		} else {
+			if (indexes.contains("[")) {
+				ArrayList<Integer> tempIndexes = new ArrayList<>();
+				StringBuilder sb = new StringBuilder();
+				for (char c : indexes.toCharArray()) {
+					if (c == '[') {
+						sb = new StringBuilder();
+					} else if (c == ']') {
+						if (JsonUtils.isNumeric(sb.toString())) {
+							tempIndexes.add(Integer.parseInt(sb.toString()));
+						} else {
+							
+							return valueResult; // <-------------------------------------- [Exit Point]
+						}
+					} else if (Character.isDigit(c)) {
+						sb.append(c);
 					} else {
 						
-						return null; // <-------------------------------------- [Exit Point]
+						return valueResult; // <------------------------------------------ [Exit Point]
 					}
-				} else if (Character.isDigit(c)) {
-					sb.append(c);
-				} else {
-					
-					return null; // <------------------------------------------ [Exit Point]
 				}
-			}
-			
-			int[] result = new int[tempIndexes.size()];
-			for (int i = 0; i < tempIndexes.size(); i++) {
-				result[i] = tempIndexes.get(i).intValue();
-			}
-			
-			return getValue(result); // <-------------------------------------- [Exit Point]
-		} else if (indexes.contains(",")) { // Comma separated indexes...
-			String[] tempIndexes = indexes.split(",");
-			int[] results = new int[tempIndexes.length];
-			int i = -1;
-			for (String inx : tempIndexes) {
-				i++ ;
-				if (JsonUtils.isNumeric(inx)) {
-					results[i] = Integer.parseInt(inx);
-				} else {
-					
-					return null; // <------------------------------------------ [Exit Point]
+				
+				int[] result = new int[tempIndexes.size()];
+				for (int i = 0; i < tempIndexes.size(); i++) {
+					result[i] = tempIndexes.get(i).intValue();
 				}
-			}
+				valueResult = getValue(result);
+				
+				return valueResult; // <-------------------------------------- [Exit Point]
+			} else if (indexes.contains(",")) { // Comma separated indexes...
+				String[] tempIndexes = indexes.split(",");
+				int[] results = new int[tempIndexes.length];
+				int i = -1;
+				for (String inx : tempIndexes) {
+					i++ ;
+					if (JsonUtils.isNumeric(inx)) {
+						results[i] = Integer.parseInt(inx);
+					} else {
+						
+						return valueResult; // <------------------------------------------ [Exit Point]
+					}
+				}
+				
+				return getValue(results); // <------------------------------------- [Exit Point]
+			} else if (JsonUtils.isNumeric(indexes)) { // Only one index...
+				
+				return getValue(Integer.parseInt(indexes)); // <------------------- [Exit Point]
+			} // Not an index type we will consider valid...
 			
-			return getValue(results); // <------------------------------------- [Exit Point]
-		} else if (JsonUtils.isNumeric(indexes)) { // Only one index...
-			
-			return getValue(Integer.parseInt(indexes)); // <------------------- [Exit Point]
-		} // Not an index type we will consider valid...
+		}
 		
-		return null; // <------------------------------------------------------ [Exit Point]
+		return valueResult; // <------------------------------------------------------ [Exit Point]	
 	}
 	
 	/**
